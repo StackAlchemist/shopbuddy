@@ -1,14 +1,22 @@
-import {models, Schema, model} from "mongoose";
+import mongoose from "mongoose";
 
-const UserSchema = new Schema({
-    name: String,
-    email: {type: String, required: true, unique: true},
-    password: { type: String, required: true }, // hashed
-    image: String,
-}, { timestamps: true });
+const UserSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: false,
+    },
+    email: {
+      type: String,
+      unique: true,
+      required: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+  },
+  { timestamps: true }
+);
 
-UserSchema.methods.comparePassword = async function(password: string) {
-    return await bcrypt.compare(password, this.password);
-}
-
-export default models.User || model("User", UserSchema);
+export default mongoose.models.User || mongoose.model("User", UserSchema);

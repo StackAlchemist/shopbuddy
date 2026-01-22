@@ -1,20 +1,45 @@
-import { Schema, model, models } from "mongoose";
+import mongoose from "mongoose";
 
-const ListSchema = new Schema(
+const ItemSchema = new mongoose.Schema(
   {
-    userId: { type: String, required: true },
-    title: { type: String, required: true },
-    category: String, // shopping, travel, tasks, inventory, etc
-    items: [
-      {
-        name: String,
-        price: Number,
-        quantity: Number,
-        notes: String,
-      },
-    ],
+    name: {
+      type: String,
+      required: true,
+    },
+    price: {
+      type: Number,
+      default: 0,
+    },
+    quantity: {
+      type: Number,
+      default: 1,
+    },
+  },
+  { _id: false } // cleaner subdocuments
+);
+
+const ListSchema = new mongoose.Schema(
+  {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    title: {
+      type: String,
+      required: true,
+    },
+    items: {
+      type: [ItemSchema],
+      default: [],
+    },
+    total: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );
 
-export default models.List || model("List", ListSchema);
+export default mongoose.models.List ||
+  mongoose.model("List", ListSchema);
