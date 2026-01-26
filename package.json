@@ -15,6 +15,7 @@
     "fontkit": "^2.0.4",
     "groq-sdk": "^0.37.0",
     "jsonwebtoken": "^9.0.3",
+    "lucide-react": "^0.563.0",
     "mongodb": "^7.0.0",
     "mongoose": "^9.1.2",
     "next": "16.1.1",

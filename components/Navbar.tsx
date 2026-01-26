@@ -1,9 +1,13 @@
-import React from 'react'
+import { getCurrentUser } from "@/lib/getUser";
+import NavbarClient from "./NavbarClient";
 
-const Navbar = () => {
-  return (
-    <div>Navbar</div>
-  )
+export default async function Navbar() {
+  interface User {
+    userId: string;
+    name?: string;
+    email?: string;
+  }
+  const user : User | null = await getCurrentUser();
+
+  return <NavbarClient user={user} />;
 }
-
-export default Navbar
