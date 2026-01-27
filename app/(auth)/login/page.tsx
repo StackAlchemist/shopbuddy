@@ -1,12 +1,41 @@
 "use client";
 
 import Link from "next/link";
-import { Mail, Lock } from "lucide-react";
+import { Mail, Lock, EyeIcon, EyeOffIcon } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+
+  const handleLogin = async () => {
+    const loading = toast.loading("Signing you in...");
+  
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+  
+      const data = await res.json();
+  
+      if (!res.ok) {
+        toast.error(data.error, { id: loading });
+        return;
+      }
+  
+      toast.success("Welcome back 👋", { id: loading });
+      window.location.href = "/lists";
+    } catch {
+      toast.error("Something went wrong", { id: loading });
+    }
+  };
+  
+  
+  
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-slate-50 px-6">
@@ -63,6 +92,7 @@ export default function LoginPage() {
                 className="w-full rounded-xl border border-slate-300 py-2.5 pl-10 pr-4 text-sm focus:border-blue-500 focus:outline-none"
               />
             </div>
+            
           </div>
 
           {/* Actions */}
@@ -84,9 +114,9 @@ export default function LoginPage() {
           </div>
 
           {/* Submit */}
-          <button
-            type="submit"
-            className="mt-2 w-full rounded-full bg-blue-600 py-2.5 text-sm font-medium text-white hover:bg-blue-700"
+          <button onClick={handleLogin}
+            type="button"
+            className="mt-2 w-full rounded-full bg-blue-600 py-2.5 text-sm font-medium text-white hover:bg-blue-700 cursor-pointer"
           >
             Log in
           </button>
