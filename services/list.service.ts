@@ -33,3 +33,7 @@ export const updateList = async (
 export const deleteList = async (listId: string, userId: string) => {
   return await List.findOneAndDelete({ _id: listId, userId });
 };
+
+export const getListById = async (listId: string, userId: string) => {
+  return await List.findOne({ _id: listId, userId });
+};

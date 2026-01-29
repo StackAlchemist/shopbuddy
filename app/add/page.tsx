@@ -2,6 +2,7 @@
 
 import { Plus, Sparkles, Trash2 } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 
 type Item = {
   name: string;
@@ -37,6 +38,25 @@ const NewListPage = () => {
     (sum, item) => sum + item.price * item.quantity,
     0
   );
+
+  const saveList = async ()=>{
+    const loading = toast.loading("Saving list...");
+    try {
+      const res = await fetch("/api/lists", {
+        method: "POST",
+        body: JSON.stringify({ title, items }),
+      });
+      if (!res.ok) {
+        toast.error("Something went wrong", { id: loading });
+        return;
+      }
+      toast.success("List saved successfully", { id: loading });
+      window.location.href = "/lists";
+    } catch (error : unknown) {
+      console.error("Error saving list:", error);
+      toast.error("Something went wrong", { id: loading });
+    }
+  }
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-10">
@@ -85,7 +105,7 @@ const NewListPage = () => {
             />
 
             <input
-              type="number"
+              type="text"
               placeholder="₦ Price"
               value={item.price}
               onChange={(e) =>
@@ -138,7 +158,7 @@ const NewListPage = () => {
             AI suggestions
           </button>
 
-          <button className="rounded-full bg-blue-600 px-5 py-2 text-sm font-medium text-white hover:bg-blue-700">
+          <button onClick={saveList} className="rounded-full bg-blue-600 px-5 py-2 text-sm font-medium text-white hover:bg-blue-700">
             Save list
           </button>
         </div>

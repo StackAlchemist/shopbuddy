@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 type List = {
   _id: string;
   title: string;
-  items: any[];
+  items: { name: string; price: number; quantity: number }[];
 };
 
 const ListsPage = () => {
@@ -103,6 +103,9 @@ const ListsPage = () => {
               <p className="mt-1 text-sm text-slate-500">
                 {list.items.length} items
               </p>
+              <Link href={`/lists/${list._id}`} className="text-blue-600 hover:text-blue-700">
+                View List
+              </Link>
             </div>
           ))}
         </section>

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/getUser";
-import { createList, getLists } from "@/services/list.service";
+import { createList, getLists, updateList } from "@/services/list.service";
 import connectDB from "@/lib/mongodb";
 export async function GET() {
     await connectDB();
@@ -27,4 +27,4 @@ export async function GET() {
   
     return NextResponse.json(list, { status: 201 });
   }
-  
+
