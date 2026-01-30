@@ -1,7 +1,8 @@
 "use client";
 
 import { Plus, Sparkles, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 type Item = {
@@ -11,10 +12,41 @@ type Item = {
 };
 
 const NewListPage = () => {
+
+  const searchParams = useSearchParams();
+  const id = searchParams.get("id");
+
   const [title, setTitle] = useState("");
   const [items, setItems] = useState<Item[]>([
     { name: "", price: 0, quantity: 1 },
   ]);
+  const [loading, setLoading] = useState(false);
+
+  const isEdit = Boolean(id);
+
+  useEffect(() => {
+    if (!id) return;
+
+    const fetchList = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch(`/api/lists/${id}`);
+        if (!res.ok) throw new Error();
+
+        const data = await res.json();
+
+        setTitle(data.title);
+        setItems(data.items);
+      } catch {
+        toast.error("Failed to load list for editing");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchList();
+  }, [id]);
+
 
   const addItem = () => {
     setItems([...items, { name: "", price: 0, quantity: 1 }]);
@@ -41,20 +73,32 @@ const NewListPage = () => {
 
   const saveList = async ()=>{
     const loading = toast.loading("Saving list...");
-    try {
-      const res = await fetch("/api/lists", {
-        method: "POST",
-        body: JSON.stringify({ title, items }),
-      });
-      if (!res.ok) {
-        toast.error("Something went wrong", { id: loading });
-        return;
-      }
-      toast.success("List saved successfully", { id: loading });
-      window.location.href = "/lists";
-    } catch (error : unknown) {
-      console.error("Error saving list:", error);
-      toast.error("Something went wrong", { id: loading });
+      try {
+        setLoading(true);
+    
+        const res = await fetch(
+          isEdit ? `/api/lists/${id}` : "/api/lists",
+          {
+            method: isEdit ? "PUT" : "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              title,
+              items,
+            }),
+          }
+        );
+    
+        if (!res.ok) {
+          toast.error("Something went wrong", { id: loading });
+          return;
+        }
+    
+        toast.success(isEdit ? "List updated" : "List created");
+        window.location.href = "/lists";
+      } catch {
+        toast.error("Something went wrong");
+      } finally {
+        setLoading(false);
     }
   }
 

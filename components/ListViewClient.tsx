@@ -1,7 +1,14 @@
-// app/lists/[id]/ListViewClient.tsx
 "use client";
 
 import { useEffect, useState } from "react";
+import {
+  ShoppingCart,
+  Receipt,
+  Trash2,
+  Download,
+  Pencil,
+} from "lucide-react";
+import { toast } from "sonner";
 
 type Item = {
   name: string;
@@ -12,46 +19,171 @@ type Item = {
 export default function ListViewClient({ id }: { id: string }) {
   const [list, setList] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState<
+    "pdf" | "delete" | null
+  >(null);
 
   useEffect(() => {
     const fetchList = async () => {
-      const res = await fetch(`/api/lists/${id}`);
-      if (!res.ok) {
-        throw new Error("Failed to fetch list");
+      try {
+        const res = await fetch(`/api/lists/${id}`);
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        setList(data);
+      } catch {
+        toast.error("Failed to load list");
+      } finally {
+        setLoading(false);
       }
-      const data = await res.json();
-      setList(data);
-      setLoading(false);
     };
 
     fetchList();
   }, [id]);
 
+  const handleDownloadPDF = async () => {
+    try {
+      setActionLoading("pdf");
+      const res = await fetch(`/api/lists/${id}/pdf`);
+      if (!res.ok) throw new Error();
+
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${list.title}.pdf`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+
+      toast.success("PDF downloaded");
+    } catch {
+      toast.error("Failed to download PDF");
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleEditList = () => {
+    window.location.href = `/add?id=${id}`;
+  };
+
+  const handleDeleteList = async () => {
+    const confirm = window.confirm(
+      "Are you sure you want to delete this list? This action cannot be undone."
+    );
+    if (!confirm) return;
+
+    try {
+      setActionLoading("delete");
+      const res = await fetch(`/api/lists/${id}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error();
+
+      toast.success("List deleted");
+      window.location.href = "/lists";
+    } catch {
+      toast.error("Failed to delete list");
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
   if (loading) {
-    return <p className="p-6">Loading...</p>;
+    return (
+      <main className="mx-auto max-w-3xl px-6 py-16 animate-pulse space-y-4">
+        <div className="h-8 w-1/2 rounded bg-slate-200" />
+        <div className="h-4 w-1/3 rounded bg-slate-200" />
+        <div className="space-y-3 pt-6">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="h-14 rounded-xl bg-slate-200" />
+          ))}
+        </div>
+      </main>
+    );
   }
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-10">
-      <h1 className="text-2xl font-semibold">{list.title}</h1>
+      {/* Header */}
+      <div className="mb-8">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white">
+            <ShoppingCart size={18} />
+          </div>
 
-      <p className="mt-2 text-sm text-slate-500">
-        Total: ₦{list.total} • {list.items.length} items
-      </p>
+          <h1 className="text-2xl font-semibold text-slate-900">
+            {list.title}
+          </h1>
+        </div>
 
-      <ul className="mt-6 space-y-3">
-        {list.items.map((item: Item) => (
-          <li
-            key={item.name}
-            className="flex justify-between rounded-lg border p-3"
-          >
-            <span>{item.name}</span>
-            <span>
-              {item.quantity} × ₦{item.price}
-            </span>
-          </li>
-        ))}
-      </ul>
+        <p className="mt-2 text-sm text-slate-500">
+          {list.items.length} items
+        </p>
+      </div>
+
+      {/* Items */}
+      <section className="overflow-hidden rounded-2xl border bg-white shadow-sm">
+        <ul className="divide-y">
+          {list.items.map((item: Item) => (
+            <li
+              key={item.name}
+              className="flex justify-between px-5 py-4 hover:bg-slate-50"
+            >
+              <div>
+                <p className="font-medium">{item.name}</p>
+                <p className="text-xs text-slate-500">
+                  ₦{item.price} × {item.quantity}
+                </p>
+              </div>
+
+              <p className="font-semibold">
+                ₦{item.price * item.quantity}
+              </p>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      {/* Total */}
+      <div className="mt-6 flex items-center justify-between rounded-2xl bg-slate-50 px-5 py-4">
+        <div className="flex items-center gap-2 text-slate-600">
+          <Receipt size={16} />
+          <span>Total</span>
+        </div>
+
+        <span className="text-lg font-semibold">
+          ₦{list.total}
+        </span>
+      </div>
+
+      {/* Actions */}
+      <div className="mt-8 flex flex-wrap gap-3">
+        <button
+          onClick={handleDownloadPDF}
+          disabled={actionLoading === "pdf"}
+          className="flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+        >
+          <Download size={16} />
+          Download PDF
+        </button>
+
+        <button
+          onClick={handleEditList}
+          className="flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-medium hover:bg-slate-50"
+        >
+          <Pencil size={16} />
+          Edit
+        </button>
+
+        <button
+          onClick={handleDeleteList}
+          disabled={actionLoading === "delete"}
+          className="flex items-center gap-2 rounded-xl border border-red-200 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
+        >
+          <Trash2 size={16} />
+          Delete
+        </button>
+      </div>
     </main>
   );
 }

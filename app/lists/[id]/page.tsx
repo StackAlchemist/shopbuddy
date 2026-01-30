@@ -11,8 +11,6 @@ type PageProps = {
     
     return (
       <main>
-        <h1>ListViewPage</h1>
-        <p>ID: {id}</p>
         <ListViewClient id={id} />
       </main>
     );
