@@ -5,7 +5,7 @@ import connectDB from "@/lib/mongodb";
 export async function GET() {
     await connectDB();
   
-    const user = await getCurrentUser(); // 👈 AWAIT
+    const user = await getCurrentUser(); //  AWAIT
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -17,7 +17,7 @@ export async function GET() {
   export async function POST(req: Request) {
     await connectDB();
   
-    const user = await getCurrentUser(); // 👈 AWAIT
+    const user = await getCurrentUser(); //  AWAIT
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
