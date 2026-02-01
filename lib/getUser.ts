@@ -3,6 +3,7 @@ import { verifyToken } from "./jwt";
 
 type AuthPayload = {
   userId: string;
+  name?: string;
 };
 
 export const getCurrentUser = async (): Promise<AuthPayload | null> => {

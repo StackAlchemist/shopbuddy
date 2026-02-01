@@ -13,6 +13,7 @@ type Item = {
 };
 
 const NewListPage = () => {
+  
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
 

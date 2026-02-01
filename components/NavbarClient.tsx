@@ -11,6 +11,7 @@ type UserType = {
 
 export default function NavbarClient({ user }: { user: UserType | null }) {
   const pathname = usePathname();
+  // console.log(user)
 
   const navItem = (
     href: string,

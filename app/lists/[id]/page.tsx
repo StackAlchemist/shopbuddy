@@ -5,6 +5,7 @@ type PageProps = {
   };
   
   export default async function ListViewPage({ params }: PageProps) {
+    
     const { id } = await params;
 
 
