@@ -128,6 +128,8 @@ const NewListPage = () => {
       if (!isEdit && data.id) {
         window.location.href = `/lists/new?id=${data.id}`;
       }
+
+      window.location.href = `/lists/${data.id}`;
     } catch {
       toast.error("Something went wrong", { id: loading });
     } finally {

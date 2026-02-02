@@ -122,30 +122,44 @@ export default function ListViewClient({ id }: { id: string }) {
       </div>
 
       {/* Items */}
-      <section className="overflow-hidden rounded-2xl border bg-white shadow-sm">
-        <ul className="divide-y">
-          {list.items.map((item: Item) => (
-            <li
-              key={item.name}
-              className="flex justify-between px-5 py-4 hover:bg-slate-50"
-            >
-              <div>
-                <p className="font-medium">{item.name}</p>
-                <p className="text-xs text-slate-500">
-                  ₦{item.price} × {item.quantity}
-                </p>
+      <div className="lg:col-span-2">
+            <div className="rounded-lg bg-amber-50 p-8 font-mono text-sm shadow-sm">
+              <div className="mb-4 border-b-2 border-dashed border-amber-900 pb-3 text-center text-xs font-semibold tracking-wide text-amber-900">
+                ─────────────────────────────
+              </div>
+              
+              <ul className="space-y-0">
+                {list.items.map((item: Item) => (
+                  <li key={item.name} className="space-y-1">
+                    <div className="flex justify-between text-amber-950">
+                      <span className="flex-1 truncate pr-4">{item.name}</span>
+                      <span className="whitespace-nowrap font-semibold">
+                        ₦{(item.price * item.quantity).toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="text-xs text-amber-700">
+                      {item.quantity} × ₦{item.price.toLocaleString()}
+                    </div>
+                    <div className="border-b border-dashed border-amber-300" />
+                  </li>
+                ))}
+              </ul>
+
+              <div className="mt-6 border-t-2 border-dashed border-amber-900 pt-3">
+                <div className="flex justify-between text-amber-950">
+                  <span className="font-semibold">TOTAL</span>
+                  <span className="font-bold">₦{list.total.toLocaleString()}</span>
+                </div>
               </div>
 
-              <p className="font-semibold">
-                ₦{item.price * item.quantity}
-              </p>
-            </li>
-          ))}
-        </ul>
-      </section>
+              <div className="mt-4 border-t-2 border-dashed border-amber-900 pt-3 text-center text-xs text-amber-700">
+                ─────────────────────────────
+              </div>
+            </div>
+          </div>
 
       {/* Total */}
-      <div className="mt-6 flex items-center justify-between rounded-2xl bg-slate-50 px-5 py-4">
+      {/* <div className="mt-6 flex items-center justify-between rounded-2xl bg-slate-50 px-5 py-4">
         <div className="flex items-center gap-2 text-slate-600">
           <Receipt size={16} />
           <span>Total</span>
@@ -154,7 +168,7 @@ export default function ListViewClient({ id }: { id: string }) {
         <span className="text-lg font-semibold">
           ₦{list.total}
         </span>
-      </div>
+      </div> */}
 
       {/* Actions */}
       <div className="mt-8 flex flex-wrap gap-3">

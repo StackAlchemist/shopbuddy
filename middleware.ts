@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// Public routes
+// Public routes that don't require authentication
 const PUBLIC_ROUTES = ["/", "/login", "/register"];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Ignore Next.js internals
+  // Ignore Next.js internals, API routes, and static files
   if (
     pathname.startsWith("/_next") ||
     pathname.startsWith("/api") ||
@@ -17,10 +17,10 @@ export function middleware(request: NextRequest) {
 
   const isPublicRoute = PUBLIC_ROUTES.includes(pathname);
 
-  // 👇 your auth cookie name
-  const token = request.cookies.get("auth_token")?.value;
+  // get the token from the cookies
+  const token = request.cookies.get("token")?.value;
 
-  // If NOT logged in & route is protected → redirect to login
+  // If NOT logged in & route is protected,redirect to login
   if (!token && !isPublicRoute) {
     const loginUrl = new URL("/login", request.url);
     return NextResponse.redirect(loginUrl);
@@ -28,13 +28,13 @@ export function middleware(request: NextRequest) {
 
   // If logged in & trying to access login/register → redirect to lists
   if (token && (pathname === "/login" || pathname === "/register")) {
-    const dashboardUrl = new URL("/lists", request.url);
-    return NextResponse.redirect(dashboardUrl);
+    const listsUrl = new URL("/lists", request.url);
+    return NextResponse.redirect(listsUrl);
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: "/:path*",
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };

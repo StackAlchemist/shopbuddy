@@ -6,7 +6,7 @@ import { signToken } from "@/lib/jwt";
 
 export async function POST(req: Request) {
   try {
-    const { email, password } = await req.json();
+    const { name, email, password } = await req.json();
 
     if (!email || !password) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
@@ -20,9 +20,13 @@ export async function POST(req: Request) {
     }
 
     const hashed = await hashPassword(password);
-    const user = await User.create({ email, password: hashed });
+    const user = await User.create({ name, email, password: hashed });
 
-    const token = signToken({ userId: user._id });
+    const token = signToken({ userId: user._id,
+      name: user.name,
+      email: user.email,
+      createdAt: user.createdAt,
+     });
 
     const res = NextResponse.json({ message: "Registered successfully" });
 

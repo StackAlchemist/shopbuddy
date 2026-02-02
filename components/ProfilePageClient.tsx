@@ -110,13 +110,13 @@ const ProfilePageClient = ({ user }: { user: UserType }) => {
 
           {/* Actions */}
           <div className="flex items-center gap-3">
-            <button
+            {/* <button
               onClick={() => setIsEditModalOpen(true)}
               className="inline-flex items-center gap-2 rounded-full border border-slate-300 px-4 py-2 text-sm transition-colors hover:bg-slate-50"
             >
               <Settings size={16} />
               Edit profile
-            </button>
+            </button> */}
 
             <button
               onClick={handleLogout}

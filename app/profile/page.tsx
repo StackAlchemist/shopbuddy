@@ -12,8 +12,11 @@ export interface User {
 export default async function ProfilePage() {
   const user: User | null = await getCurrentUser();
 
-  // Redirect to login if not authenticated
+  // Debug log (can remove in prod)
+  console.log("User from getCurrentUser:", user);
+
   if (!user) {
+    console.log("No user found, redirecting to login");
     redirect("/login");
   }
 
