@@ -27,7 +27,7 @@ export async function PUT(
 
 export async function DELETE(
   _: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   await connectDB();
 
@@ -36,7 +36,8 @@ export async function DELETE(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  await deleteList(params.id, user.userId);
+  const { id } = await params;
+  await deleteList(id, user.userId);
   return NextResponse.json({ success: true });
 }
 

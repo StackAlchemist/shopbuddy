@@ -2,7 +2,7 @@
 
 import { Plus, Sparkles, Trash2 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, Suspense } from "react"; // Added Suspense
 import { toast } from "sonner";
 import SmartSuggestions from "@/components/SmartSuggestions";
 
@@ -12,8 +12,8 @@ type Item = {
   quantity: number;
 };
 
-const NewListPage = () => {
-  
+//search params logic
+const ListEditor = () => {
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
 
@@ -102,7 +102,7 @@ const NewListPage = () => {
   );
 
   const saveList = async () => {
-    const loading = toast.loading("Saving list...");
+    const loadingToast = toast.loading("Saving list..."); // Renamed variable to avoid conflict
     try {
       setLoading(true);
 
@@ -116,22 +116,23 @@ const NewListPage = () => {
       });
 
       if (!res.ok) {
-        toast.error("Something went wrong", { id: loading });
+        toast.error("Something went wrong", { id: loadingToast });
         return;
       }
 
       const data = await res.json();
+      console.log(data);
 
-      toast.success(isEdit ? "List updated" : "List created", { id: loading });
+      toast.success(isEdit ? "List updated" : "List created", { id: loadingToast });
 
       // If creating a new list, redirect to edit mode with the new ID
-      if (!isEdit && data.id) {
+      if (!isEdit && data._id) {
         window.location.href = `/lists/new?id=${data.id}`;
       }
 
-      window.location.href = `/lists/${data.id}`;
+      window.location.href = `/lists/${data._id}`;
     } catch {
-      toast.error("Something went wrong", { id: loading });
+      toast.error("Something went wrong", { id: loadingToast });
     } finally {
       setLoading(false);
     }
@@ -275,6 +276,19 @@ const NewListPage = () => {
         onAddItem={addSuggestedItem}
       />
     </main>
+  );
+};
+
+// 2. The default export acts as the Suspense boundary wrapper
+const NewListPage = () => {
+  return (
+    <Suspense fallback={
+      <div className="flex h-screen items-center justify-center text-slate-500">
+        Loading editor...
+      </div>
+    }>
+      <ListEditor />
+    </Suspense>
   );
 };
 
