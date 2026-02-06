@@ -169,43 +169,42 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8 relative">
+        <div className="grid md:grid-cols-2 gap-12 max-w-4xl mx-auto">
           
-          {/* Connection lines */}
-          <div className="hidden md:block absolute top-1/2 left-1/3 w-1/3 h-1 bg-gradient-to-r from-blue-300 via-cyan-300 to-blue-400 -translate-y-1/2 z-0" />
-          <div className="hidden md:block absolute top-1/2 right-0 w-1/3 h-1 bg-gradient-to-r from-blue-400 via-cyan-300 to-blue-500 -translate-y-1/2 z-0" />
-
           <StepCard
             number="01"
             title="Create a list"
-            description="Start with a simple name. Groceries, party supplies, camping gear - anything you need."
+            description="Start with a simple name - groceries, party supplies, or anything you need."
             icon={<ShoppingCart className="w-6 h-6" />}
             gradient="from-blue-500 to-blue-600"
           />
           
           <StepCard
             number="02"
-            title="Add what you remember"
-            description="Quickly jot down items as they come to mind. No need to be complete."
+            title="Add items"
+            description="Quickly jot down the items you remember. No need to be complete."
             icon={<Brain className="w-6 h-6" />}
             gradient="from-blue-600 to-cyan-500"
           />
           
           <StepCard
             number="03"
-            title="Let AI fill the gaps"
-            description="Our AI analyzes your list and suggests items you might have forgotten."
+            title="AI fills gaps"
+            description="Our AI suggests items you might have forgotten based on your list."
             icon={<Stars className="w-6 h-6" />}
-            gradient="from-cyan-500 to-blue-700"
+            gradient="from-cyan-500 to-blue-600"
           />
+          
           <StepCard
             number="04"
-            title="Save and share"
-            description="Save your list and share it with others, by exporting it as a PDF."
+            title="Save & share"
+            description="Export your complete list as a PDF and share with others."
             icon={<FileText className="w-6 h-6" />}
-            gradient="from-cyan-500 to-blue-700"
+            gradient="from-blue-600 to-blue-700"
           />
         </div>
+
+
       </section>
 
       {/* CTA Section with bold gradient */}
