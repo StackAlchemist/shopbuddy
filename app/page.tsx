@@ -8,6 +8,7 @@ import {
   ArrowRight,
   Check,
   Stars,
+  FileText,
 } from "lucide-react";
 
 export default function Home() {
@@ -95,13 +96,18 @@ export default function Home() {
             
             <div className="relative rounded-3xl border-4 border-white shadow-2xl overflow-hidden hover:scale-[1.02] transition-transform duration-500">
               <Image
-                src="/images/dashboard.png"
+                src="/hero_pic.jpg"
                 alt="Shopping list dashboard"
                 width={1200}
                 height={700}
                 priority
                 className="w-full"
               />
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent py-8 px-6">
+                <p className="text-white text-2xl md:text-3xl font-semibold text-center">
+                  Never forget a single thing, again.
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -190,6 +196,13 @@ export default function Home() {
             title="Let AI fill the gaps"
             description="Our AI analyzes your list and suggests items you might have forgotten."
             icon={<Stars className="w-6 h-6" />}
+            gradient="from-cyan-500 to-blue-700"
+          />
+          <StepCard
+            number="04"
+            title="Save and share"
+            description="Save your list and share it with others, by exporting it as a PDF."
+            icon={<FileText className="w-6 h-6" />}
             gradient="from-cyan-500 to-blue-700"
           />
         </div>

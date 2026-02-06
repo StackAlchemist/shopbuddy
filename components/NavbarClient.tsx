@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Sparkles, List, Brain, User, Plus } from "lucide-react";
+import { Sparkles, List, Brain, User, Plus, Menu, X } from "lucide-react";
+import { useState } from "react";
 
 type UserType = {
   name?: string;
@@ -11,18 +12,43 @@ type UserType = {
 
 export default function NavbarClient({ user }: { user: UserType | null }) {
   const pathname = usePathname();
-  // console.log(user)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navItem = (
     href: string,
     label: string,
-    Icon: React.ElementType
+    Icon: React.ElementType,
+    mobile?: boolean
   ) => {
     const active = pathname === href;
+
+    if (mobile) {
+      return (
+        <Link
+          href={href}
+          onClick={() => setMobileMenuOpen(false)}
+          className={`flex items-center gap-3 rounded-xl px-4 py-3 text-base font-medium transition-all
+            ${
+              active
+                ? "bg-blue-50 text-blue-600"
+                : "text-slate-700 hover:bg-slate-50"
+            }
+          `}
+        >
+          <div className={`flex h-9 w-9 items-center justify-center rounded-lg ${
+            active ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-600"
+          }`}>
+            <Icon size={18} />
+          </div>
+          {label}
+        </Link>
+      );
+    }
 
     return (
       <Link
         href={href}
+        onClick={() => setMobileMenuOpen(false)}
         className={`relative flex items-center gap-1.5 text-sm font-medium transition-colors
           ${
             active
@@ -35,7 +61,7 @@ export default function NavbarClient({ user }: { user: UserType | null }) {
         {label}
 
         {active && (
-          <span className="absolute -bottom-[21px] left-0 h-[2px] w-full rounded-full bg-blue-600" />
+          <span className="absolute -bottom-[21px] left-0 h-[2px] w-full rounded-full bg-blue-600 md:block hidden" />
         )}
       </Link>
     );
@@ -96,8 +122,42 @@ export default function NavbarClient({ user }: { user: UserType | null }) {
               Log in
             </Link>
           )}
+
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden flex items-center justify-center p-2 text-slate-600 hover:text-slate-900 transition-colors"
+          >
+            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
         </div>
       </div>
+
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <div className="md:hidden border-t border-slate-200 bg-white shadow-lg animate-in slide-in-from-top-2 duration-200">
+          <nav className="flex flex-col gap-2 px-4 py-6">
+            {navItem("/lists", "Lists", List, true)}
+            {navItem("/ai", "AI Assistant", Brain, true)}
+            
+            {user && (
+              <>
+                <div className="my-2 border-t border-slate-100" />
+                <Link
+                  href="/add"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 rounded-xl bg-blue-600 px-4 py-3 text-base font-medium text-white hover:bg-blue-700 transition-colors shadow-sm"
+                >
+                  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/20">
+                    <Plus size={18} />
+                  </div>
+                  Create New List
+                </Link>
+              </>
+            )}
+          </nav>
+        </div>
+      )}
     </header>
   );
 }
